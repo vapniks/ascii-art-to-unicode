@@ -332,6 +332,31 @@ are START (top left) and END (bottom right)."
    start end
    unmark))
 
+;;;###autoload
+(defun aa2u-reverse (beg end &optional interactive)
+  "Convert Unicode diagrams to ASCII.
+Specifically, do the reverse operation of `aa2u'.
+
+This command operates on either the active region,
+or the accessible portion otherwise."
+  (interactive "r\np")
+  (when (and interactive (not (region-active-p)))
+    (setq beg (point-min)
+          end (point-max)))
+  (save-excursion
+    (save-restriction
+      (widen)
+      (narrow-to-region beg end)
+      (goto-char beg)
+      (while (re-search-forward "[─━]" nil t)
+	(replace-match "-"))
+      (goto-char beg)
+      (while (re-search-forward "[│┃]" nil t)
+	(replace-match "|"))
+      (goto-char beg)      
+      (while (re-search-forward "[┌┐└┘┬┤├┴┼┏┓┗┛┳┫┣┻╋]" nil t)
+	(replace-match "\+")))))
+
 ;;;---------------------------------------------------------------------------
 ;;; that's it
 
